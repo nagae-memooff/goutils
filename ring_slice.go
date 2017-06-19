@@ -31,6 +31,17 @@ func (s *RingSlice) Add(element interface{}) {
 	s.lock.Unlock()
 }
 
+func (s *RingSlice) Clean() {
+	s.lock.Lock()
+
+	s.offset = 0
+	for i, _ := range s.s {
+		s.s[i] = nil
+	}
+
+	s.lock.Unlock()
+}
+
 func (s *RingSlice) GetAll() (slice []interface{}) {
 	s.lock.RLock()
 
