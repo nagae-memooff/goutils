@@ -129,7 +129,6 @@ func GetMagnificationFromUnit(unit string) (magnification float64) {
 	return
 }
 
-
 func GobEncode(data interface{}) ([]byte, error) {
 	buf := bytes.NewBuffer(nil)
 	enc := gob.NewEncoder(buf)

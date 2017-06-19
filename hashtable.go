@@ -8,7 +8,6 @@ import (
 
 var ()
 
-
 type HashTable struct {
 	_map   map[string]interface{}
 	rwlock sync.RWMutex
