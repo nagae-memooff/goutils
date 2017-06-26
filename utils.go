@@ -80,7 +80,7 @@ func AtoUint64(s string) (i uint64, err error) {
 
 func IsDiskFS(fs string) bool {
 	switch fs {
-	case "ext4", "ext3", "ext2":
+	case "btrfs", "ext2", "ext3", "ext4", "jfs", "reiser", "xfs", "ffs", "ufs", "jfs2", "vxfs", "hfs", "ntfs", "fat32", "zfs", "fuse.mfs":
 		return true
 	default:
 		return false
