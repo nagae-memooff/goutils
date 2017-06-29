@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"bufio"
 	"bytes"
 	"encoding/gob"
 	"fmt"
@@ -143,4 +144,27 @@ func GobDecode(data []byte, to interface{}) error {
 	buf := bytes.NewBuffer(data)
 	dec := gob.NewDecoder(buf)
 	return dec.Decode(to)
+}
+
+func GetMemUsage() (int, error) {
+	pageSize := 4096
+
+	pid := os.Getpid()
+
+	f, err := os.Open(fmt.Sprintf("/proc/%d/stat", pid))
+	if err != nil {
+		return 0, fmt.Errorf("failed to get memory usage by pid: %s", pid)
+	}
+
+	defer f.Close()
+
+	buff := bufio.NewReader(f)
+
+	line, err := buff.ReadString('\n')
+	cpu_metrics := strings.Fields(line)
+
+	rss, _ := strconv.Atoi(cpu_metrics[23])
+
+	return rss * pageSize, nil
+
 }
