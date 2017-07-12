@@ -39,6 +39,15 @@ func (h *HashTable) Set(key string, value interface{}) *HashTable {
 	return h
 }
 
+func (h *HashTable) Delete(key string) *HashTable {
+	h.rwlock.Lock()
+	defer h.rwlock.Unlock()
+
+	delete(h._map, key)
+
+	return h
+}
+
 func (h *HashTable) GetBool(key string) (value bool) {
 	h.rwlock.RLock()
 	defer h.rwlock.RUnlock()
