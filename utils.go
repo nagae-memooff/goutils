@@ -66,6 +66,10 @@ func ListDir(dirPth string, suffix string) (files []string, err error) {
 }
 
 func Include(str string, strings []string) bool {
+	if strings == nil {
+		return false
+	}
+
 	for _, element := range strings {
 		if element == str {
 			return true
