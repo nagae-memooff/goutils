@@ -62,6 +62,10 @@ func (h *HashTable) GetInt(key string) (value int) {
 	defer h.rwlock.RUnlock()
 
 	switch n := h._map[key].(type) {
+	case uint64:
+		value = int(n)
+	case int64:
+		value = int(n)
 	case int:
 		value = n
 	case float64:
