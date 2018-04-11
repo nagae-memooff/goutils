@@ -8,6 +8,9 @@ import (
 
 var ()
 
+// 实现了一个固定大小、线程安全的环状slice。
+// 容量满了以后，添加新元素就会替代最旧的元素，保证长度不变且元素有序。
+
 type RingSlice struct {
 	offset int           // 目前的游标
 	s      []interface{} // 存储元素

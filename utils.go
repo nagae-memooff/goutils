@@ -15,6 +15,8 @@ import (
 
 var ()
 
+// 以登录式shell的形式执行命令。由于是登陆式shell，因此能加载环境变量
+// 由于是把命令拼装传给bash，因此支持管道、重定向等，使用比较方便
 func Sysexec(cmd string, args ...string) (result string, err error) {
 	arg := append([]string{cmd}, args...)
 	arg_str := fmt.Sprintf("%s", strings.Join(arg, " "))
@@ -23,6 +25,7 @@ func Sysexec(cmd string, args ...string) (result string, err error) {
 	return strings.TrimSpace(string(ori_output)), err
 }
 
+// 判断目录是否存在
 func IsDirExist(path string) (exist bool) {
 	fi, err := os.Stat(path)
 
@@ -34,6 +37,7 @@ func IsDirExist(path string) (exist bool) {
 	return
 }
 
+// 判断文件是否存在
 func IsFileExist(path string) (exist bool) {
 	fi, err := os.Stat(path)
 
@@ -45,6 +49,7 @@ func IsFileExist(path string) (exist bool) {
 	return
 }
 
+// 列出目录中指定结尾的文件的文件名(不包含目录)
 func ListDir(dirPth string, suffix string) (files []string, err error) {
 	dir, err := ioutil.ReadDir(dirPth)
 	if err != nil {
@@ -65,6 +70,7 @@ func ListDir(dirPth string, suffix string) (files []string, err error) {
 	return
 }
 
+// 字符串数组中是否存在指定字符
 func Include(str string, strings []string) bool {
 	if strings == nil {
 		return false
@@ -79,10 +85,12 @@ func Include(str string, strings []string) bool {
 	return false
 }
 
+// string转换成uint64
 func AtoUint64(s string) (i uint64, err error) {
 	return strconv.ParseUint(s, 10, 64)
 }
 
+// 判断指定的文件系统类型是否是磁盘文件系统，diamond里用
 func IsDiskFS(fs string) bool {
 	switch fs {
 	case "btrfs", "ext2", "ext3", "ext4", "jfs", "reiser", "xfs", "ffs", "ufs", "jfs2", "vxfs", "hfs", "ntfs", "fat32", "zfs", "fuse.mfs":
@@ -92,6 +100,7 @@ func IsDiskFS(fs string) bool {
 	}
 }
 
+// 拷贝一个字符串类型的map。字符串类型，无所谓深拷贝浅拷贝。
 func CloneMap(src map[string]string) (dst map[string]string) {
 	dst = make(map[string]string)
 	for key, value := range src {
@@ -101,6 +110,7 @@ func CloneMap(src map[string]string) (dst map[string]string) {
 	return
 }
 
+// 单位转换用
 func UnitConvert(i float64, oldunit, newunit string) (j float64) {
 	m1 := GetMagnificationFromUnit(oldunit)
 	m2 := GetMagnificationFromUnit(newunit)
@@ -134,6 +144,7 @@ func GetMagnificationFromUnit(unit string) (magnification float64) {
 	return
 }
 
+// 把一个data序列化成golang自己的gob格式，方便存储
 func GobEncode(data interface{}) ([]byte, error) {
 	buf := bytes.NewBuffer(nil)
 	enc := gob.NewEncoder(buf)
@@ -144,12 +155,14 @@ func GobEncode(data interface{}) ([]byte, error) {
 	return buf.Bytes(), nil
 }
 
+// 把一个gob格式的序列化后的byte数组，反序列化到给定的结构中。
 func GobDecode(data []byte, to interface{}) error {
 	buf := bytes.NewBuffer(data)
 	dec := gob.NewDecoder(buf)
 	return dec.Decode(to)
 }
 
+// 获取当前进程内存占用
 func GetMemUsage() (int, error) {
 	pageSize := 4096
 

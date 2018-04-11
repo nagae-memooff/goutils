@@ -8,6 +8,7 @@ import (
 
 var ()
 
+// 对内置map类型的封装，支持通用类型、线程安全。
 type HashTable struct {
 	_map   map[string]interface{}
 	rwlock sync.RWMutex
