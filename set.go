@@ -41,6 +41,12 @@ func (s *Set) Remove(item interface{}) (exists bool) {
 	return true
 }
 
+func (s *Set) Clear() {
+	s.rwlock.Lock()
+	s._map = make(map[interface{}]interface{})
+	s.rwlock.Unlock()
+}
+
 func (s *Set) GetAll() (items []interface{}) {
 	s.rwlock.RLock()
 	for k, _ := range s._map {
@@ -86,4 +92,10 @@ func NewSet() (h *Set) {
 	}
 
 	return
+}
+
+func (s *Set) Load(items... interface{}) {
+	for _, item := range items {
+		s.Add(item)
+	}
 }
