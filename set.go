@@ -94,7 +94,7 @@ func NewSet() (h *Set) {
 	return
 }
 
-func (s *Set) Load(items... interface{}) {
+func (s *Set) Load(items ...interface{}) {
 	for _, item := range items {
 		s.Add(item)
 	}
