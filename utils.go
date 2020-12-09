@@ -180,7 +180,7 @@ func GetMemUsage() (int, error) {
 
 	f, err := os.Open(fmt.Sprintf("/proc/%d/stat", pid))
 	if err != nil {
-		return 0, fmt.Errorf("failed to get memory usage by pid: %s", pid)
+		return 0, fmt.Errorf("failed to get memory usage by pid: %d", pid)
 	}
 
 	defer f.Close()
@@ -223,5 +223,20 @@ func Sha1Sum(data string) (sum string) {
 	bs := h.Sum(nil)
 	//SHA1 值经常以 16 进制输出，例如在 git commit 中。使用%x 来将散列结果格式化为 16 进制字符串。
 	sum = fmt.Sprintf("%x", bs)
+	return
+}
+
+func SplitToIntSlice(str string) (slice []int) {
+	str = strings.TrimSpace(str)
+	string_slice := strings.Split(str, ",")
+	slice = make([]int, 0, len(string_slice))
+
+	for _, item := range string_slice {
+		i, err := strconv.Atoi(strings.TrimSpace(item))
+		if err == nil {
+			slice = append(slice, i)
+		}
+	}
+
 	return
 }
