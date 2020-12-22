@@ -59,6 +59,10 @@ func IsFileExist(path string) (exist bool) {
 	return
 }
 
+func Mkdirp(dir string) {
+	os.MkdirAll(dir, os.ModePerm)
+}
+
 // 列出目录中指定结尾的文件的文件名(不包含目录)
 func ListDir(dirPth string, suffix string) (files []string, err error) {
 	dir, err := ioutil.ReadDir(dirPth)
