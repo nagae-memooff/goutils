@@ -4,11 +4,13 @@ import (
 	"bufio"
 	"bytes"
 	"encoding/gob"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"math/rand"
 	"os"
 	"os/exec"
+	"reflect"
 	"strconv"
 	"strings"
 	"time"
@@ -281,4 +283,40 @@ func SplitToIntSlice(str string) (slice []int) {
 	}
 
 	return
+}
+
+func UniqDup(data interface{}) interface{} {
+	slice := reflect.ValueOf(data)
+	if slice.Kind() != reflect.Slice && slice.Kind() != reflect.Array {
+		return data
+	}
+
+	_map := make(map[interface{}]struct{})
+	uniq_slice := reflect.MakeSlice(slice.Type(), 0, slice.Len())
+
+	for i := 0; i < slice.Len(); i++ {
+		item := slice.Index(i)
+
+		if _, ok := _map[item.Interface()]; !ok {
+			uniq_slice = reflect.Append(uniq_slice, slice.Index(i))
+			_map[item.Interface()] = struct{}{}
+		}
+	}
+
+	return uniq_slice.Interface()
+}
+
+func Uniq(data interface{}) (err error) {
+
+	value := reflect.ValueOf(data)
+	if value.Kind() != reflect.Ptr {
+		errors.New("not a pointer")
+		return
+	}
+
+	uniq_slice := UniqDup(value.Elem().Interface())
+	ptr := reflect.ValueOf(uniq_slice)
+
+	value.Elem().Set(ptr)
+	return nil
 }
