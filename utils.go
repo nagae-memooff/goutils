@@ -285,36 +285,55 @@ func SplitToIntSlice(str string) (slice []int) {
 	return
 }
 
-func UniqDup(data interface{}) interface{} {
+func UniqDup(data interface{}) (interface{}, error) {
 	slice := reflect.ValueOf(data)
 	if slice.Kind() != reflect.Slice && slice.Kind() != reflect.Array {
-		return data
+		return data, errors.New("data is not a slice or array")
 	}
 
 	_map := make(map[interface{}]struct{})
 	uniq_slice := reflect.MakeSlice(slice.Type(), 0, slice.Len())
+	in := make([]reflect.Value, 0)
 
 	for i := 0; i < slice.Len(); i++ {
 		item := slice.Index(i)
+		_, ok := reflect.TypeOf(item.Interface()).MethodByName("UniqId")
 
-		if _, ok := _map[item.Interface()]; !ok {
-			uniq_slice = reflect.Append(uniq_slice, slice.Index(i))
-			_map[item.Interface()] = struct{}{}
+		if ok {
+			retval := item.MethodByName("UniqId").Call(in)
+			if len(retval) == 1 && retval[0].Kind() == reflect.Int {
+				id := retval[0].Int()
+
+				if _, ok := _map[id]; !ok {
+					uniq_slice = reflect.Append(uniq_slice, slice.Index(i))
+					_map[id] = struct{}{}
+				}
+			} else {
+				return struct{}{}, errors.New("func (UniqId) return value not int")
+			}
+		} else {
+			if _, ok := _map[item.Interface()]; !ok {
+				uniq_slice = reflect.Append(uniq_slice, slice.Index(i))
+				_map[item.Interface()] = struct{}{}
+			}
 		}
 	}
 
-	return uniq_slice.Interface()
+	return uniq_slice.Interface(), nil
 }
 
 func Uniq(data interface{}) (err error) {
 
 	value := reflect.ValueOf(data)
 	if value.Kind() != reflect.Ptr {
-		errors.New("not a pointer")
+		err = errors.New("not a pointer")
 		return
 	}
 
-	uniq_slice := UniqDup(value.Elem().Interface())
+	uniq_slice, err := UniqDup(value.Elem().Interface())
+	if err != nil {
+		return
+	}
 	ptr := reflect.ValueOf(uniq_slice)
 
 	value.Elem().Set(ptr)
