@@ -339,3 +339,10 @@ func Uniq(data interface{}) (err error) {
 	value.Elem().Set(ptr)
 	return nil
 }
+
+// 调试时避免烦人的未使用变量提示
+func Unused(args ...interface{}) {
+	for _, arg := range args {
+		fmt.Printf("unused var: %v(%t)\n", arg, arg)
+	}
+}
